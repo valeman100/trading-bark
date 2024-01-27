@@ -9,7 +9,6 @@ import os
 PHONE_NUMBER = os.environ["PHONE_NUMBER"]
 
 
-import cv2
 import time
 def make_filename(ext, ms):
     return "./clips/sample_{0}.{1}".format(ms, ext)
@@ -37,7 +36,6 @@ def send_message(corr, count):
 
     headers = {'Content-Type': 'application/json'}
     r = requests.post(URL, json=payload, headers=headers)
-    print r
 
 def listen():
 
