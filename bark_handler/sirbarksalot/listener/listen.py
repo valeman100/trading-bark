@@ -1,9 +1,10 @@
 """
 """
-import wave
+
 import pyaudio
 from scipy.io import wavfile
 import numpy as np
+
 
 def calculate_buffer_size(rate, frames_per_buffer, sample_length):
     """ calculate the buffer size
@@ -15,6 +16,7 @@ def calculate_buffer_size(rate, frames_per_buffer, sample_length):
     """
     return (rate / frames_per_buffer) * sample_length
 
+
 class Listener(object):
     _config = {
         "frames_per_buffer": 1024,
@@ -23,6 +25,7 @@ class Listener(object):
         "channels": 1,
         "input": True
     }
+
     def __init__(self, sample_length=5):
         self.input = pyaudio.PyAudio()
         self.stream = None
@@ -46,7 +49,7 @@ class Listener(object):
         frames = []
         while len(frames) < self.n_frames:
             frames.append(
-                self.stream.read(self._config["frames_per_buffer"])
+                self.stream.read(self._config["frames_per_buffer"], exception_on_overflow=False)
             )
         return np.fromstring(b''.join(frames), dtype=np.int16)
 

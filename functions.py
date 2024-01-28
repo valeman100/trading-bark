@@ -11,8 +11,9 @@ def plot_history(data, ticker):
     plt.ylabel('Price', fontsize=14)
     plt.xlabel('Year', fontsize=14)
     plt.grid(which="major", color='k', linestyle='-.', linewidth=0.5)
+    plt.savefig(f'{ticker}_history.png')
 
-    plt.show()
+    # plt.show()
 
 
 def print_stock_info(stock):
