@@ -21,3 +21,8 @@ def get_tickers_from_SP500():
 
     return tickers
 
+
+def get_tickers_from_xlsx():
+    import pandas as pd
+    tickers_dict = pd.read_excel('Lista stock borsa NY.xlsx').to_dict()
+    return tickers_dict

@@ -13,38 +13,58 @@ def plot_history(data, ticker):
     plt.grid(which="major", color='k', linestyle='-.', linewidth=0.5)
     plt.savefig(f'{ticker}_history.png')
 
-    # plt.show()
+    plt.show()
 
 
 def print_stock_info(stock):
-    print(stock.earnings_dates.dropna(subset=['EPS Estimate']))
+    try:
+        print(stock.earnings_dates.dropna(subset=['EPS Estimate']))
+    except Exception:
+        print("No earnings dates found")
 
-    print("\nLatest news:")
-    for news in stock.news:
-        print(news['title'])
+    news = stock.news if stock.news else None
+    if news:
+        print("\nLatest news:")
+        for new in news:
+            print(new['title'])
 
 
 def random_picker(stocks_list):
-    i = randrange(len(stocks_list))
-    random_stock = stocks_list[i]
+    if isinstance(stocks_list, dict):
+        i = randrange(len(stocks_list["ACT Symbol"]))
+    else:
+        i = randrange(len(stocks_list))
 
-    return random_stock
+    return i
 
 
 def extract_random_stock(stocks_list, print_info=False):
-    ticker = random_picker(stocks_list)
-
     start_date = '2000-01-01'
     end_date = datetime.now().strftime("%Y-%m-%d")
 
-    stock = yf.Ticker(ticker)
-    data = stock.history(start=start_date, end=end_date, auto_adjust=True)
+    last_stock_value = []
+    stock_name = None
+    while not last_stock_value:
+        i = random_picker(stocks_list)
+        if isinstance(stocks_list, dict):
+            ticker = stocks_list["ACT Symbol"][i]
+            stock_name = stocks_list["Company Name"][i]
+        else:
+            ticker = stocks_list[i]
 
-    last_stock_value = data['Close'][-1]
+        stock = yf.Ticker(ticker)
+        data = stock.history(start=start_date, end=end_date, auto_adjust=True)
+        last_stock_value = data.get('Close').tolist()
+
+    print(f'\nYour dog is barking! Hurry up to buy "{stock_name}"!\n')
 
     if print_info:
         print_stock_info(stock)
-        plot_history(data, ticker)
+        # plot_history(data, ticker)
 
-    return last_stock_value, stock
+    return last_stock_value[-1], ticker, stock
 
+
+def send_message(corr):
+    msg = {'text': 'woof woof: {:.4f}'.format(corr)}
+    print(msg)
